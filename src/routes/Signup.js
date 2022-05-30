@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import InputBox from '../components/InputBox';
 
 const Signup = ({ users, addUser }) => {
@@ -19,7 +20,6 @@ const Signup = ({ users, addUser }) => {
     email: false,
     phone: false,
     password: false,
-    confirm: false,
     username: false,
     referral: true,
   });
@@ -29,6 +29,9 @@ const Signup = ({ users, addUser }) => {
     phone: false,
     username: false,
   });
+
+  const [msg, setMsg] = useState('');
+  const navigate = useNavigate();
 
   const isExist = (id, value) => {
     let result = false;
@@ -100,10 +103,42 @@ const Signup = ({ users, addUser }) => {
     setInfos(newInfos);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!infos.email || !checkList.email || !checkDupList.email) {
+      setMsg('Please check email');
+      document.getElementById('email').focus();
+    } else if (!infos.phone || !checkList.phone || !checkDupList.phone) {
+      setMsg('Please check phone number');
+      document.getElementById('phone').focus();
+    } else if (!infos.password || !checkList.password) {
+      setMsg('Please check password');
+      document.getElementById('password').focus();
+    } else if (!infos.confirm || infos.password !== infos.confirm) {
+      setMsg('Please check confirm password');
+      document.getElementById('confirm').focus();
+    } else if (
+      !infos.username ||
+      !checkList.username ||
+      !checkDupList.username
+    ) {
+      setMsg('Please check username');
+      document.getElementById('username').focus();
+    } else if (infos.referral && !checkList.referral) {
+      setMsg('Please check referral username');
+      document.getElementById('referral').focus();
+    } else if (!infos.all && (!infos.terms || !infos.privacy)) {
+      setMsg('Please agree to the required terms');
+    } else {
+      addUser(infos);
+      navigate('../welcome', { replace: true });
+    }
+  };
+
   return (
     <section>
       <h1>Be my guest!</h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         <InputBox
           value={infos.email}
           type="email"
@@ -149,7 +184,7 @@ const Signup = ({ users, addUser }) => {
           label="Confirm Password"
           onChange={handleChange}
         />
-        {infos.confirm.length > 0 && !(infos.password === infos.confirm) && (
+        {infos.confirm.length > 0 && infos.password !== infos.confirm && (
           <span>Password mismatch</span>
         )}
         <InputBox
@@ -207,6 +242,7 @@ const Signup = ({ users, addUser }) => {
           isLabelFirst={false}
           onChange={handleChangeCheckbox}
         />
+        <span>{msg}</span>
         <button type="submit">Submit</button>
       </form>
     </section>
