@@ -46,12 +46,15 @@ const Signup = ({ users, addUser }) => {
     const regEmail =
       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
     const regPhone = /^[0-9]{2,3}[0-9]{3,4}[0-9]{4}/;
+    const regUsername = /^([a-zA-Z0-9_.]){2,10}$/;
     if (id === 'email') {
       newCheckList.email = regEmail.test(value);
     } else if (id === 'phone') {
       newCheckList.phone = regPhone.test(value);
+    } else if (id === 'username') {
+      newCheckList.username = regUsername.test(value);
     }
-    if (['email', 'phone'].includes(id)) {
+    if (['email', 'phone', 'username'].includes(id)) {
       newCheckList[id] && checkDup(id, value);
     }
     setCheckList(newCheckList);
@@ -125,6 +128,12 @@ const Signup = ({ users, addUser }) => {
           label="Username"
           onChange={handleChange}
         />
+        {infos.username.length > 0 && !checkList.username && (
+          <span>Invalid username</span>
+        )}
+        {checkList.username && !checkDupList.username && (
+          <span>Duplicated username</span>
+        )}
         <InputBox
           infos={infos.referral}
           type="text"
