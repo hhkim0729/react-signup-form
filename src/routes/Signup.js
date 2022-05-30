@@ -82,7 +82,6 @@ const Signup = ({ users, addUser }) => {
     const { id, checked } = target;
     const newInfos = { ...infos };
     if (id === 'all') {
-      newInfos.all = checked;
       newInfos.terms = checked;
       newInfos.privacy = checked;
       newInfos.marketing = checked;
