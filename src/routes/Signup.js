@@ -45,12 +45,10 @@ const Signup = ({ users, addUser }) => {
   };
 
   const checkDup = (id, value) => {
-    const newCheckDupList = { ...checkDupList };
-    newCheckDupList[id] = true;
-    if (isExist(id, value)) {
-      newCheckDupList[id] = false;
-    }
-    setCheckDupList(newCheckDupList);
+    setCheckDupList((prev) => ({
+      ...prev,
+      [id]: isExist(id, value) ? false : true,
+    }));
   };
 
   const checkValue = (id, value) => {
