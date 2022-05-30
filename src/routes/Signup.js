@@ -81,11 +81,15 @@ const Signup = ({ users, addUser }) => {
 
   const handleChange = ({ target }) => {
     const { id, value } = target;
+    let newValue = value;
+    if (id === 'phone') {
+      newValue = value.substr(0, 11);
+    }
     setInfos((prev) => ({
       ...prev,
-      [id]: value,
+      [id]: newValue,
     }));
-    checkValue(id, value);
+    checkValue(id, newValue);
   };
 
   const handleChangeCheckbox = ({ target }) => {
