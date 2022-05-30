@@ -1,7 +1,7 @@
 import React from 'react';
 import InputBox from '../components/InputBox';
 
-const Signup = ({ users, addUser }) => {
+const Signup = () => {
   return (
     <section>
       <h1>Be my guest!</h1>
