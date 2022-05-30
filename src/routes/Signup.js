@@ -24,12 +24,30 @@ const Signup = ({ users, addUser }) => {
     checkboxes: false,
   });
 
+  const [checkDupList, setCheckDupList] = useState({
+    email: false,
+    phone: false,
+    username: false,
+  });
+
+  const checkDup = (id, value) => {
+    const newCheckDupList = { ...checkDupList };
+    newCheckDupList[id] = true;
+    users.forEach((user) => {
+      if (user[id] === value) {
+        newCheckDupList[id] = false;
+      }
+    });
+    setCheckDupList(newCheckDupList);
+  };
+
   const checkValue = (id, value) => {
     const newCheckList = { ...checkList };
     let regEmail =
-      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+      /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
     if (id === 'email') {
-      newCheckList.email = regEmail.test(value) ? true : false;
+      newCheckList.email = regEmail.test(value);
+      newCheckList.email && checkDup(id, value);
     }
     setCheckList(newCheckList);
   };
@@ -63,7 +81,10 @@ const Signup = ({ users, addUser }) => {
           onChange={handleChange}
         />
         {infos.email.length > 0 && !checkList.email && (
-          <span>유효하지 않은 이메일</span>
+          <span>Invalid email</span>
+        )}
+        {checkList.email && !checkDupList.email && (
+          <span>Duplicated email</span>
         )}
         <InputBox
           infos={infos.phone}
