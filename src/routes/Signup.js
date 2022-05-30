@@ -9,6 +9,7 @@ const Signup = ({ users, addUser }) => {
     confirm: '',
     username: '',
     referral: '',
+    all: false,
     terms: false,
     privacy: false,
     marketing: false,
@@ -21,7 +22,6 @@ const Signup = ({ users, addUser }) => {
     confirm: false,
     username: false,
     referral: true,
-    checkboxes: false,
   });
 
   const [checkDupList, setCheckDupList] = useState({
@@ -87,10 +87,17 @@ const Signup = ({ users, addUser }) => {
 
   const handleChangeCheckbox = ({ target }) => {
     const { id, checked } = target;
-    setInfos((prev) => ({
-      ...prev,
-      [id]: checked,
-    }));
+    console.log(target);
+    const newInfos = { ...infos };
+    if (id === 'all') {
+      newInfos.all = checked;
+      newInfos.terms = checked;
+      newInfos.privacy = checked;
+      newInfos.marketing = checked;
+    } else {
+      newInfos[id] = checked;
+    }
+    setInfos(newInfos);
   };
 
   return (
@@ -98,7 +105,7 @@ const Signup = ({ users, addUser }) => {
       <h1>Be my guest!</h1>
       <form>
         <InputBox
-          infos={infos.email}
+          value={infos.email}
           type="email"
           id="email"
           label="Email"
@@ -111,7 +118,7 @@ const Signup = ({ users, addUser }) => {
           <span>Duplicated email</span>
         )}
         <InputBox
-          infos={infos.phone}
+          value={infos.phone}
           type="tel"
           id="phone"
           label="Phone"
@@ -124,7 +131,7 @@ const Signup = ({ users, addUser }) => {
           <span>Duplicated phone number</span>
         )}
         <InputBox
-          infos={infos.password}
+          value={infos.password}
           type="password"
           id="password"
           label="Password"
@@ -136,7 +143,7 @@ const Signup = ({ users, addUser }) => {
           </span>
         )}
         <InputBox
-          infos={infos.confirm}
+          value={infos.confirm}
           type="password"
           id="confirm"
           label="Confirm Password"
@@ -146,7 +153,7 @@ const Signup = ({ users, addUser }) => {
           <span>Password mismatch</span>
         )}
         <InputBox
-          infos={infos.username}
+          value={infos.username}
           type="text"
           id="username"
           label="Username"
@@ -159,7 +166,7 @@ const Signup = ({ users, addUser }) => {
           <span>Duplicated username</span>
         )}
         <InputBox
-          infos={infos.referral}
+          value={infos.referral}
           type="text"
           id="referral"
           label="Referral Username"
@@ -169,26 +176,34 @@ const Signup = ({ users, addUser }) => {
           <span>Invalid username</span>
         )}
         <InputBox
-          infos={infos.terms}
+          value={infos.all}
+          type="checkbox"
+          id="all"
+          label="I agree to all"
+          isLabelFirst={false}
+          onChange={handleChangeCheckbox}
+        />
+        <InputBox
+          value={infos.terms}
           type="checkbox"
           id="terms"
-          label="I agree to the Terms and Conditions"
+          label="I agree to the Terms and Conditions (required)"
           isLabelFirst={false}
           onChange={handleChangeCheckbox}
         />
         <InputBox
-          infos={infos.privacy}
+          value={infos.privacy}
           type="checkbox"
           id="privacy"
-          label="I agree to the Privacy Policy"
+          label="I agree to the Privacy Policy (required)"
           isLabelFirst={false}
           onChange={handleChangeCheckbox}
         />
         <InputBox
-          infos={infos.marketing}
+          value={infos.marketing}
           type="checkbox"
           id="marketing"
-          label="I agree to receive marketing emails"
+          label="I agree to receive marketing emails (optional)"
           isLabelFirst={false}
           onChange={handleChangeCheckbox}
         />

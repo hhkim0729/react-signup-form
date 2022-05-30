@@ -11,7 +11,13 @@ const InputBox = ({
   return (
     <div>
       {isLabelFirst && <label htmlFor={id}>{label}</label>}
-      <input type={type} id={id} onChange={onChange} value={value} />
+      <input
+        type={type}
+        id={id}
+        onChange={onChange}
+        value={value}
+        checked={value}
+      />
       {!isLabelFirst && <label htmlFor={id}>{label}</label>}
     </div>
   );
