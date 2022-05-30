@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import InputBox from '../components/InputBox';
 import { testRegex } from '../utils/regexTest';
 
-const Signup = ({ users, addUser }) => {
+const Signup = ({ users, addUser, setLoginUser }) => {
   const [infos, setInfos] = useState({
     email: '',
     phone: '',
@@ -124,6 +124,7 @@ const Signup = ({ users, addUser }) => {
       setMsg('Please agree to the required terms');
     } else {
       addUser(infos);
+      setLoginUser(infos);
       navigate('../welcome', { replace: true });
     }
   };
