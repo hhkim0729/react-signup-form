@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputBox from '../components/InputBox';
 import ErrorMsg from '../components/ErrorMsg';
+import Button from '../components/Button';
 import { testRegex } from '../utils/regexTest';
 
 const Signup = ({ users, addUser, setLoginUser }) => {
@@ -235,8 +236,8 @@ const Signup = ({ users, addUser, setLoginUser }) => {
           isLabelFirst={false}
           onChange={handleChangeCheckbox}
         />
-        <span>{msg}</span>
-        <button type="submit">Submit</button>
+        <ErrorMsg msg={msg} />
+        <Button type="submit" text="Submit" />
       </form>
     </section>
   );
