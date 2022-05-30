@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputBox from '../components/InputBox';
+import ErrorMsg from '../components/ErrorMsg';
 import { testRegex } from '../utils/regexTest';
 
 const Signup = ({ users, addUser, setLoginUser }) => {
@@ -141,10 +142,10 @@ const Signup = ({ users, addUser, setLoginUser }) => {
           onChange={handleChange}
         />
         {infos.email.length > 0 && !checkList.email && (
-          <span>Invalid email</span>
+          <ErrorMsg msg="Invalid email" />
         )}
         {checkList.email && !checkDupList.email && (
-          <span>Duplicated email</span>
+          <ErrorMsg msg="Duplicated email" />
         )}
         <InputBox
           value={infos.phone}
@@ -154,10 +155,10 @@ const Signup = ({ users, addUser, setLoginUser }) => {
           onChange={handleChange}
         />
         {infos.phone.length > 0 && !checkList.phone && (
-          <span>Invalid phone number</span>
+          <ErrorMsg msg="Invalid phone number" />
         )}
         {checkList.phone && !checkDupList.phone && (
-          <span>Duplicated phone number</span>
+          <ErrorMsg msg="Duplicated phone number" />
         )}
         <InputBox
           value={infos.password}
@@ -167,9 +168,7 @@ const Signup = ({ users, addUser, setLoginUser }) => {
           onChange={handleChange}
         />
         {infos.password.length > 0 && !checkList.password && (
-          <span>
-            Invalid password (at least 1 lower case, 1 upper case, 1 number)
-          </span>
+          <ErrorMsg msg="Invalid password (at least 1 lower case, 1 upper case, 1 number)" />
         )}
         <InputBox
           value={infos.confirm}
@@ -179,7 +178,7 @@ const Signup = ({ users, addUser, setLoginUser }) => {
           onChange={handleChange}
         />
         {infos.confirm.length > 0 && infos.password !== infos.confirm && (
-          <span>Password mismatch</span>
+          <ErrorMsg msg="Password doesn't match" />
         )}
         <InputBox
           value={infos.username}
@@ -189,10 +188,10 @@ const Signup = ({ users, addUser, setLoginUser }) => {
           onChange={handleChange}
         />
         {infos.username.length > 0 && !checkList.username && (
-          <span>Invalid username</span>
+          <ErrorMsg msg="Invalid username" />
         )}
         {checkList.username && !checkDupList.username && (
-          <span>Duplicated username</span>
+          <ErrorMsg msg="Duplicated username" />
         )}
         <InputBox
           value={infos.referral}
@@ -202,7 +201,7 @@ const Signup = ({ users, addUser, setLoginUser }) => {
           onChange={handleChange}
         />
         {infos.referral.length > 0 && !checkList.referral && (
-          <span>Invalid username</span>
+          <ErrorMsg msg="Invalid username" />
         )}
         <InputBox
           value={infos.all}
