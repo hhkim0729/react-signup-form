@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import InputBox from '../components/InputBox';
 import ErrorMsg from '../components/ErrorMsg';
 import Button from '../components/Button';
-import { testRegex } from '../utils/regexTest';
+import { testRegex } from '../utils';
 
 const Signup = ({ users, addUser, setLoginUser }) => {
   const [infos, setInfos] = useState({
