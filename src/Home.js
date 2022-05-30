@@ -47,7 +47,7 @@ function Home() {
           <Route path="/" element={<Main user={user} />} />
           <Route
             path="signup"
-            element={<Signup uses={users} addUser={addUser} />}
+            element={<Signup users={users} addUser={addUser} />}
           />
           <Route path="welcome" element={<Welcome user={user} />} />
           <Route path="*" element={<Error />} />
