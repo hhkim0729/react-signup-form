@@ -1,10 +1,10 @@
 import React from 'react';
 
-const InputBox = ({ type, id, label, isLabelFirst = true }) => {
+const InputBox = ({ type, id, label, isLabelFirst = true, onChange }) => {
   return (
     <div>
       {isLabelFirst && <label htmlFor={id}>{label}</label>}
-      <input type={type} id={id} />
+      <input type={type} id={id} onChange={onChange} />
       {!isLabelFirst && <label htmlFor={id}>{label}</label>}
     </div>
   );
