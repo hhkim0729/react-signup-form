@@ -3,7 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import Main from './routes/Main';
 import Signup from './routes/Signup';
 import Welcome from './routes/Welcome';
-import Error from './components/Error';
+import Error from './routes/Error';
 
 function Home() {
   const [users, setUsers] = useState([
