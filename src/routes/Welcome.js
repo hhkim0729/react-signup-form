@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Welcome = () => {
+const Welcome = ({ user }) => {
   return (
     <section>
-      <h1>We're happy you're here, username!</h1>
+      <h1>We're happy you're here, {user.username}!</h1>
     </section>
   );
 };
