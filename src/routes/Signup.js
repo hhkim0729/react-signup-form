@@ -27,9 +27,9 @@ const Signup = ({ users, addUser }) => {
   const checkValue = (id, value) => {
     const newCheckList = { ...checkList };
     let regEmail =
-      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+      /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
     if (id === 'email') {
-      newCheckList.email = regEmail.test(value) ? true : false;
+      newCheckList.email = regEmail.test(value);
     }
     setCheckList(newCheckList);
   };
@@ -63,7 +63,7 @@ const Signup = ({ users, addUser }) => {
           onChange={handleChange}
         />
         {infos.email.length > 0 && !checkList.email && (
-          <span>유효하지 않은 이메일</span>
+          <span>Invalid email</span>
         )}
         <InputBox
           infos={infos.phone}
