@@ -42,8 +42,10 @@ const Signup = () => {
               <label htmlFor="privacy">I agree to the Privacy Policy</label>
             </div>
             <div>
-              <input type="checkbox" id="terms" />
-              <label htmlFor="terms">I agree to receive marketing emails</label>
+              <input type="checkbox" id="marketing" />
+              <label htmlFor="marketing">
+                I agree to receive marketing emails
+              </label>
             </div>
             <button type="submit">Submit</button>
           </form>
