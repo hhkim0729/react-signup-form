@@ -94,7 +94,6 @@ const Signup = ({ users, addUser }) => {
 
   const handleChangeCheckbox = ({ target }) => {
     const { id, checked } = target;
-    console.log(target);
     const newInfos = { ...infos };
     if (id === 'all') {
       newInfos.all = checked;
@@ -103,6 +102,11 @@ const Signup = ({ users, addUser }) => {
       newInfos.marketing = checked;
     } else {
       newInfos[id] = checked;
+    }
+    if (newInfos.terms && newInfos.privacy && newInfos.marketing) {
+      newInfos.all = checked;
+    } else if (!checked) {
+      newInfos.all = checked;
     }
     setInfos(newInfos);
   };
