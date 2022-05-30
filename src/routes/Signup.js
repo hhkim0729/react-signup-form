@@ -14,6 +14,16 @@ const Signup = ({ users, addUser }) => {
     marketing: false,
   });
 
+  const [checkList, setCheckList] = useState({
+    email: false,
+    phone: false,
+    password: false,
+    confirm: false,
+    username: false,
+    referral: false,
+    checkboxes: false,
+  });
+
   const handleChange = ({ target }) => {
     const { id, value } = target;
     setInfos((prev) => ({
