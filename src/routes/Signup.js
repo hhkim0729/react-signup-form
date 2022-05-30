@@ -43,7 +43,7 @@ const Signup = ({ users, addUser }) => {
 
   const checkValue = (id, value) => {
     const newCheckList = { ...checkList };
-    let regEmail =
+    const regEmail =
       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
     if (id === 'email') {
       newCheckList.email = regEmail.test(value);
