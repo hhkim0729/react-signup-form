@@ -45,9 +45,14 @@ const Signup = ({ users, addUser }) => {
     const newCheckList = { ...checkList };
     const regEmail =
       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+    const regPhone = /^[0-9]{2,3}[0-9]{3,4}[0-9]{4}/;
     if (id === 'email') {
       newCheckList.email = regEmail.test(value);
-      newCheckList.email && checkDup(id, value);
+    } else if (id === 'phone') {
+      newCheckList.phone = regPhone.test(value);
+    }
+    if (['email', 'phone'].includes(id)) {
+      newCheckList[id] && checkDup(id, value);
     }
     setCheckList(newCheckList);
   };
@@ -93,6 +98,12 @@ const Signup = ({ users, addUser }) => {
           label="Phone"
           onChange={handleChange}
         />
+        {infos.phone.length > 0 && !checkList.phone && (
+          <span>Invalid phone number</span>
+        )}
+        {checkList.phone && !checkDupList.phone && (
+          <span>Duplicated phone number</span>
+        )}
         <InputBox
           infos={infos.password}
           type="password"
