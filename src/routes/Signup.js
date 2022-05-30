@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import InputBox from '../components/InputBox';
 
-const Signup = () => {
+const Signup = ({ users, addUser }) => {
   const [infos, setInfos] = useState({});
 
   const handleChange = ({ target }) => {
