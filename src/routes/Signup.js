@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputBox from '../components/InputBox';
+import ErrorMsg from '../components/ErrorMsg';
+import Button from '../components/Button';
+import { testRegex } from '../utils';
 
-const Signup = ({ users, addUser }) => {
+const Signup = ({ users, addUser, setLoginUser }) => {
   const [infos, setInfos] = useState({
     email: '',
     phone: '',
@@ -44,34 +47,19 @@ const Signup = ({ users, addUser }) => {
   };
 
   const checkDup = (id, value) => {
-    const newCheckDupList = { ...checkDupList };
-    newCheckDupList[id] = true;
-    users.forEach((user) => {
-      if (user[id] === value) {
-        newCheckDupList[id] = false;
-      }
-    });
-    setCheckDupList(newCheckDupList);
+    setCheckDupList((prev) => ({
+      ...prev,
+      [id]: isExist(id, value) ? false : true,
+    }));
   };
 
   const checkValue = (id, value) => {
     const newCheckList = { ...checkList };
-    const regEmail =
-      /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
-    const regPhone = /^[0-9]{2,3}[0-9]{3,4}[0-9]{4}/;
-    const regPassword = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}/;
-    const regUsername = /^([a-zA-Z0-9_.]){2,10}$/;
-    if (id === 'email') {
-      newCheckList.email = regEmail.test(value);
-    } else if (id === 'phone') {
-      newCheckList.phone = regPhone.test(value);
-    } else if (id === 'password') {
-      newCheckList.password = regPassword.test(value);
-    } else if (id === 'username') {
-      newCheckList.username = regUsername.test(value);
+    if (['email', 'phone', 'password', 'username'].includes(id)) {
+      newCheckList[id] = testRegex(id, value);
     } else if (id === 'referral') {
       newCheckList.referral =
-        regUsername.test(value) && isExist('username', value);
+        testRegex('username', value) && isExist('username', value);
     }
     if (['email', 'phone', 'username'].includes(id)) {
       newCheckList[id] && checkDup(id, value);
@@ -96,7 +84,6 @@ const Signup = ({ users, addUser }) => {
     const { id, checked } = target;
     const newInfos = { ...infos };
     if (id === 'all') {
-      newInfos.all = checked;
       newInfos.terms = checked;
       newInfos.privacy = checked;
       newInfos.marketing = checked;
@@ -139,6 +126,7 @@ const Signup = ({ users, addUser }) => {
       setMsg('Please agree to the required terms');
     } else {
       addUser(infos);
+      setLoginUser(infos);
       navigate('../welcome', { replace: true });
     }
   };
@@ -155,10 +143,10 @@ const Signup = ({ users, addUser }) => {
           onChange={handleChange}
         />
         {infos.email.length > 0 && !checkList.email && (
-          <span>Invalid email</span>
+          <ErrorMsg msg="Invalid email" />
         )}
         {checkList.email && !checkDupList.email && (
-          <span>Duplicated email</span>
+          <ErrorMsg msg="Duplicated email" />
         )}
         <InputBox
           value={infos.phone}
@@ -168,10 +156,10 @@ const Signup = ({ users, addUser }) => {
           onChange={handleChange}
         />
         {infos.phone.length > 0 && !checkList.phone && (
-          <span>Invalid phone number</span>
+          <ErrorMsg msg="Invalid phone number" />
         )}
         {checkList.phone && !checkDupList.phone && (
-          <span>Duplicated phone number</span>
+          <ErrorMsg msg="Duplicated phone number" />
         )}
         <InputBox
           value={infos.password}
@@ -181,9 +169,7 @@ const Signup = ({ users, addUser }) => {
           onChange={handleChange}
         />
         {infos.password.length > 0 && !checkList.password && (
-          <span>
-            Invalid password (at least 1 lower case, 1 upper case, 1 number)
-          </span>
+          <ErrorMsg msg="Invalid password (at least 1 lower case, 1 upper case, 1 number)" />
         )}
         <InputBox
           value={infos.confirm}
@@ -193,7 +179,7 @@ const Signup = ({ users, addUser }) => {
           onChange={handleChange}
         />
         {infos.confirm.length > 0 && infos.password !== infos.confirm && (
-          <span>Password mismatch</span>
+          <ErrorMsg msg="Password doesn't match" />
         )}
         <InputBox
           value={infos.username}
@@ -203,10 +189,10 @@ const Signup = ({ users, addUser }) => {
           onChange={handleChange}
         />
         {infos.username.length > 0 && !checkList.username && (
-          <span>Invalid username</span>
+          <ErrorMsg msg="Invalid username" />
         )}
         {checkList.username && !checkDupList.username && (
-          <span>Duplicated username</span>
+          <ErrorMsg msg="Duplicated username" />
         )}
         <InputBox
           value={infos.referral}
@@ -216,7 +202,7 @@ const Signup = ({ users, addUser }) => {
           onChange={handleChange}
         />
         {infos.referral.length > 0 && !checkList.referral && (
-          <span>Invalid username</span>
+          <ErrorMsg msg="Invalid username" />
         )}
         <InputBox
           value={infos.all}
@@ -250,8 +236,8 @@ const Signup = ({ users, addUser }) => {
           isLabelFirst={false}
           onChange={handleChangeCheckbox}
         />
-        <span>{msg}</span>
-        <button type="submit">Submit</button>
+        <ErrorMsg msg={msg} />
+        <Button type="submit" text="Submit" />
       </form>
     </section>
   );

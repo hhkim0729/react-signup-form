@@ -3,7 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import Main from './routes/Main';
 import Signup from './routes/Signup';
 import Welcome from './routes/Welcome';
-import Error from './components/Error';
+import Error from './routes/Error';
 
 function Home() {
   const [users, setUsers] = useState([
@@ -18,11 +18,6 @@ function Home() {
   const [user, setUser] = useState({});
 
   const addUser = ({ email, phone, username }) => {
-    setUser({
-      email: email,
-      phone: phone,
-      username: username,
-    });
     setUsers((prev) =>
       prev.concat({
         email: email,
@@ -30,6 +25,14 @@ function Home() {
         username: username,
       })
     );
+  };
+
+  const setLoginUser = ({ email, phone, username }) => {
+    setUser({
+      email: email,
+      phone: phone,
+      username: username,
+    });
   };
 
   return (
@@ -47,7 +50,13 @@ function Home() {
           <Route path="/" element={<Main user={user} />} />
           <Route
             path="signup"
-            element={<Signup users={users} addUser={addUser} />}
+            element={
+              <Signup
+                users={users}
+                addUser={addUser}
+                setLoginUser={setLoginUser}
+              />
+            }
           />
           <Route path="welcome" element={<Welcome user={user} />} />
           <Route path="*" element={<Error />} />
