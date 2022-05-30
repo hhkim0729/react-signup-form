@@ -30,6 +30,16 @@ const Signup = ({ users, addUser }) => {
     username: false,
   });
 
+  const isExist = (id, value) => {
+    let result = false;
+    users.forEach((user) => {
+      if (user[id] === value) {
+        result = true;
+      }
+    });
+    return result;
+  };
+
   const checkDup = (id, value) => {
     const newCheckDupList = { ...checkDupList };
     newCheckDupList[id] = true;
@@ -53,6 +63,9 @@ const Signup = ({ users, addUser }) => {
       newCheckList.phone = regPhone.test(value);
     } else if (id === 'username') {
       newCheckList.username = regUsername.test(value);
+    } else if (id === 'referral') {
+      newCheckList.referral =
+        regUsername.test(value) && isExist('username', value);
     }
     if (['email', 'phone', 'username'].includes(id)) {
       newCheckList[id] && checkDup(id, value);
@@ -141,6 +154,9 @@ const Signup = ({ users, addUser }) => {
           label="Referral Username"
           onChange={handleChange}
         />
+        {infos.referral.length > 0 && !checkList.referral && (
+          <span>Invalid username</span>
+        )}
         <InputBox
           infos={infos.terms}
           type="checkbox"
