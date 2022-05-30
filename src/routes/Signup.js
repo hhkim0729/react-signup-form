@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputBox from '../components/InputBox';
+import { testRegex } from '../utils/regexTest';
 
 const Signup = ({ users, addUser }) => {
   const [infos, setInfos] = useState({
@@ -46,32 +47,19 @@ const Signup = ({ users, addUser }) => {
   const checkDup = (id, value) => {
     const newCheckDupList = { ...checkDupList };
     newCheckDupList[id] = true;
-    users.forEach((user) => {
-      if (user[id] === value) {
-        newCheckDupList[id] = false;
-      }
-    });
+    if (isExist(id, value)) {
+      newCheckDupList[id] = false;
+    }
     setCheckDupList(newCheckDupList);
   };
 
   const checkValue = (id, value) => {
     const newCheckList = { ...checkList };
-    const regEmail =
-      /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
-    const regPhone = /^[0-9]{2,3}[0-9]{3,4}[0-9]{4}/;
-    const regPassword = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}/;
-    const regUsername = /^([a-zA-Z0-9_.]){2,10}$/;
-    if (id === 'email') {
-      newCheckList.email = regEmail.test(value);
-    } else if (id === 'phone') {
-      newCheckList.phone = regPhone.test(value);
-    } else if (id === 'password') {
-      newCheckList.password = regPassword.test(value);
-    } else if (id === 'username') {
-      newCheckList.username = regUsername.test(value);
+    if (['email', 'phone', 'password', 'username'].includes(id)) {
+      newCheckList[id] = testRegex(id, value);
     } else if (id === 'referral') {
       newCheckList.referral =
-        regUsername.test(value) && isExist('username', value);
+        testRegex('username', value) && isExist('username', value);
     }
     if (['email', 'phone', 'username'].includes(id)) {
       newCheckList[id] && checkDup(id, value);
