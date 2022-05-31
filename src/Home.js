@@ -39,7 +39,7 @@ function Home() {
     <div>
       <header>
         <div>
-          <Link to="/">The Coolest website</Link>
+          <Link to="/">The Coolest Website</Link>
         </div>
       </header>
       <main>
