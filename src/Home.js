@@ -38,9 +38,6 @@ function Home() {
   return (
     <div>
       <header>
-        <nav>
-          <Link to="/welcome">welcome</Link>
-        </nav>
         <div>
           <Link to="/">The Coolest website</Link>
         </div>
