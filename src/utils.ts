@@ -1,4 +1,4 @@
-export const testRegex = (type, value) => {
+export const testRegex = (type: string, value: string) => {
   const regEmail =
     /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
   const regPhone = /^[0-9]{2,3}[0-9]{3,4}[0-9]{4}/;
@@ -14,4 +14,8 @@ export const testRegex = (type, value) => {
     return regUsername.test(value);
   }
   return false;
+};
+
+export const focusInput = (id: string) => {
+  (document.getElementById(id) as HTMLElement).focus();
 };

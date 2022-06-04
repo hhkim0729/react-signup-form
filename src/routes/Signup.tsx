@@ -3,9 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import InputBox from '../components/InputBox';
 import ErrorMsg from '../components/ErrorMsg';
 import Button from '../components/Button';
-import { testRegex } from '../utils';
+import { testRegex, focusInput } from '../utils';
+import { UserProps, InfosProps } from '../interface';
 
-const Signup = ({ users, addUser, setLoginUser }) => {
+interface SignupProps {
+  users: UserProps[];
+  addUser: ({ email, phone, username }: InfosProps) => void;
+  setLoginUser: ({ email, phone, username }: InfosProps) => void;
+}
+
+interface CheckListProps {
+  email: boolean;
+  phone: boolean;
+  password: boolean;
+  username: boolean;
+  referral: boolean;
+  [customKey: string]: boolean;
+}
+
+const Signup = ({ users, addUser, setLoginUser }: SignupProps) => {
   const [infos, setInfos] = useState({
     email: '',
     phone: '',
@@ -36,7 +52,7 @@ const Signup = ({ users, addUser, setLoginUser }) => {
   const [msg, setMsg] = useState('');
   const navigate = useNavigate();
 
-  const isExist = (id, value) => {
+  const isExist = (id: string, value: string) => {
     let result = false;
     users.forEach((user) => {
       if (user[id] === value) {
@@ -46,15 +62,15 @@ const Signup = ({ users, addUser, setLoginUser }) => {
     return result;
   };
 
-  const checkDup = (id, value) => {
+  const checkDup = (id: string, value: string) => {
     setCheckDupList((prev) => ({
       ...prev,
       [id]: isExist(id, value) ? false : true,
     }));
   };
 
-  const checkValue = (id, value) => {
-    const newCheckList = { ...checkList };
+  const checkValue = (id: string, value: string) => {
+    const newCheckList: CheckListProps = { ...checkList };
     if (['email', 'phone', 'password', 'username'].includes(id)) {
       newCheckList[id] = testRegex(id, value);
     } else if (id === 'referral') {
@@ -67,11 +83,11 @@ const Signup = ({ users, addUser, setLoginUser }) => {
     setCheckList(newCheckList);
   };
 
-  const handleChange = ({ target }) => {
+  const handleChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = target;
     let newValue = value;
     if (id === 'phone') {
-      newValue = value.substr(0, 11);
+      newValue = value.substring(0, 11);
     }
     setInfos((prev) => ({
       ...prev,
@@ -80,9 +96,11 @@ const Signup = ({ users, addUser, setLoginUser }) => {
     checkValue(id, newValue);
   };
 
-  const handleChangeCheckbox = ({ target }) => {
+  const handleChangeCheckbox = ({
+    target,
+  }: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = target;
-    const newInfos = { ...infos };
+    const newInfos: InfosProps = { ...infos };
     if (id === 'all') {
       newInfos.terms = checked;
       newInfos.privacy = checked;
@@ -98,30 +116,30 @@ const Signup = ({ users, addUser, setLoginUser }) => {
     setInfos(newInfos);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!infos.email || !checkList.email || !checkDupList.email) {
       setMsg('Please check email');
-      document.getElementById('email').focus();
+      focusInput('email');
     } else if (!infos.phone || !checkList.phone || !checkDupList.phone) {
       setMsg('Please check phone number');
-      document.getElementById('phone').focus();
+      focusInput('phone');
     } else if (!infos.password || !checkList.password) {
       setMsg('Please check password');
-      document.getElementById('password').focus();
+      focusInput('password');
     } else if (!infos.confirm || infos.password !== infos.confirm) {
       setMsg('Please check confirm password');
-      document.getElementById('confirm').focus();
+      focusInput('confirm');
     } else if (
       !infos.username ||
       !checkList.username ||
       !checkDupList.username
     ) {
       setMsg('Please check username');
-      document.getElementById('username').focus();
+      focusInput('username');
     } else if (infos.referral && !checkList.referral) {
       setMsg('Please check referral username');
-      document.getElementById('referral').focus();
+      focusInput('referral');
     } else if (!infos.all && (!infos.terms || !infos.privacy)) {
       setMsg('Please agree to the required terms');
     } else {

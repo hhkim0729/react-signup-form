@@ -4,8 +4,9 @@ import Main from './routes/Main';
 import Signup from './routes/Signup';
 import Welcome from './routes/Welcome';
 import Error from './routes/Error';
+import { UserProps, InfosProps } from './interface';
 
-function Home() {
+const Home = () => {
   const [users, setUsers] = useState([
     { email: 'hello@gmail.com', phone: '01012345678', username: 'hello' },
     { email: 'world@naver.com', phone: '020001111', username: 'world' },
@@ -15,9 +16,13 @@ function Home() {
       username: 'heehkim',
     },
   ]);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState({
+    email: '',
+    phone: '',
+    username: '',
+  });
 
-  const addUser = ({ email, phone, username }) => {
+  const addUser = ({ email, phone, username }: InfosProps) => {
     setUsers((prev) =>
       prev.concat({
         email: email,
@@ -27,12 +32,13 @@ function Home() {
     );
   };
 
-  const setLoginUser = ({ email, phone, username }) => {
-    setUser({
+  const setLoginUser = ({ email, phone, username }: InfosProps) => {
+    const newUser: UserProps = {
       email: email,
       phone: phone,
       username: username,
-    });
+    };
+    setUser(newUser);
   };
 
   return (
@@ -61,6 +67,6 @@ function Home() {
       </main>
     </div>
   );
-}
+};
 
 export default Home;
