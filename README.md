@@ -1,5 +1,7 @@
 # 회원가입 폼
 
+<img src="https://user-images.githubusercontent.com/72433681/172048400-7487b363-5b80-49bc-b01e-b17f3a850da9.png" height="600" />
+
 ## 요구사항
 
 ### 필드
