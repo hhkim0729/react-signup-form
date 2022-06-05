@@ -1,11 +1,12 @@
 import React from 'react';
+import './InputBox.css';
 
 interface InputBoxProps {
-  value: string | boolean;
+  value: string;
   type?: string;
   id: string;
-  label: string;
-  isLabelFirst?: boolean;
+  legend: string;
+  isRequired?: boolean;
   onChange: ({ target }: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -13,22 +14,24 @@ const InputBox = ({
   value,
   type = 'text',
   id,
-  label,
-  isLabelFirst = true,
+  legend,
+  isRequired = true,
   onChange,
 }: InputBoxProps) => {
   return (
-    <div>
-      {isLabelFirst && <label htmlFor={id}>{label}</label>}
+    <fieldset className="InputBox">
+      <legend className="InputBox__legend">
+        {legend}
+        <span className="InputBox__star">{isRequired && `*`}</span>
+      </legend>
       <input
+        className="InputBox__input"
         type={type}
         id={id}
         onChange={onChange}
-        value={type !== 'checkbox' ? String(value) : ''}
-        checked={type === 'checkbox' ? Boolean(value) : false}
+        value={value}
       />
-      {!isLabelFirst && <label htmlFor={id}>{label}</label>}
-    </div>
+    </fieldset>
   );
 };
 

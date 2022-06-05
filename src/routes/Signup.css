@@ -1,0 +1,18 @@
+.Signup {
+  display: grid;
+  grid-template-rows: 1fr 30px 9fr;
+}
+
+.Signup__msg {
+  justify-self: right;
+  align-self: center;
+  font-size: 1em;
+}
+
+.Signup__star {
+  color: coral;
+}
+
+.Signup__form {
+  display: grid;
+}

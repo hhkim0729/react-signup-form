@@ -1,0 +1,9 @@
+.ErrorMsg {
+  height: 2em;
+  width: 25em;
+  font-size: 0.9em;
+  text-align: center;
+  margin: 0.2em 0;
+  color: #333;
+  justify-self: center;
+}

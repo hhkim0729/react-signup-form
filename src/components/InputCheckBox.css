@@ -1,0 +1,12 @@
+.InputCheckBox {
+  font-size: 1em;
+  display: flex;
+}
+
+.InputCheckBox__label {
+  margin-left: 0.5em;
+}
+
+.InputCheckBox__star {
+  color: coral;
+}
