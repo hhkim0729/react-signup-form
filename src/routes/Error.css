@@ -1,0 +1,8 @@
+.Error {
+  text-align: center;
+}
+
+.Error__msg {
+  font-weight: lighter;
+  font-size: 2vh;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import './Button.css';
 
 interface ButtonProps {
   type: 'submit' | 'button' | 'reset' | undefined;
@@ -6,7 +7,11 @@ interface ButtonProps {
 }
 
 const Button = ({ type, text }: ButtonProps) => {
-  return <button type={type}>{text}</button>;
+  return (
+    <button className="Button" type={type}>
+      {text}
+    </button>
+  );
 };
 
 export default Button;

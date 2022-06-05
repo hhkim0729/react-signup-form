@@ -5,6 +5,7 @@ import Signup from './routes/Signup';
 import Welcome from './routes/Welcome';
 import Error from './routes/Error';
 import { UserProps, InfosProps } from './interface';
+import './Home.css';
 
 const Home = () => {
   const [users, setUsers] = useState([
@@ -42,13 +43,13 @@ const Home = () => {
   };
 
   return (
-    <div>
-      <header>
-        <div>
+    <div className="Home">
+      <header className="Home__header">
+        <div className="Home__title">
           <Link to="/">The Coolest Website</Link>
         </div>
       </header>
-      <main>
+      <main className="Home__main">
         <Routes>
           <Route path="/" element={<Main user={user} />} />
           <Route
