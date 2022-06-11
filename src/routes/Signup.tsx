@@ -1,5 +1,6 @@
-import React, { useState, useEffect, memo, useCallback } from 'react';
+import React, { useState, useEffect, memo, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { debounce } from 'lodash';
 import InputBox from '../components/InputBox';
 import InputCheckBox from '../components/InputCheckBox';
 import ErrorMsg from '../components/ErrorMsg';
@@ -92,6 +93,14 @@ const Signup = memo(({ users, addUser, setLoginUser }: SignupProps) => {
     [checkDup, checkList, isExist]
   );
 
+  const debounceCheckValue = useMemo(
+    () =>
+      debounce((id, newValue) => {
+        checkValue(id, newValue);
+      }, 300),
+    [checkValue]
+  );
+
   const handleChange = useCallback(
     ({ target }: React.ChangeEvent<HTMLInputElement>) => {
       const { id, value } = target;
@@ -103,9 +112,9 @@ const Signup = memo(({ users, addUser, setLoginUser }: SignupProps) => {
         ...prev,
         [id]: newValue,
       }));
-      checkValue(id, newValue);
+      debounceCheckValue(id, newValue);
     },
-    [checkValue]
+    [debounceCheckValue]
   );
 
   const handleChangeCheckbox = useCallback(
