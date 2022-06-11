@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import './Button.css';
 
 interface ButtonProps {
@@ -6,12 +6,12 @@ interface ButtonProps {
   text: string;
 }
 
-const Button = ({ type, text }: ButtonProps) => {
+const Button = memo(({ type, text }: ButtonProps) => {
   return (
     <button className="Button" type={type}>
       {text}
     </button>
   );
-};
+});
 
 export default Button;
