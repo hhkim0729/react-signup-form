@@ -4,5 +4,5 @@
 
 .Error__msg {
   font-weight: lighter;
-  font-size: 2vh;
+  font-size: calc(1em + 1vh);
 }

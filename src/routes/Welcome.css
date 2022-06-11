@@ -3,5 +3,6 @@
 }
 
 .Welcome__msg {
+  font-size: calc(2em + 1vh);
   font-weight: 100;
 }

@@ -10,7 +10,7 @@
 }
 
 .Home__title {
-  font-size: 3vh;
+  font-size: calc(1em + 1.2vh);
   line-height: 220%;
 }
 
@@ -18,7 +18,7 @@
   color: blue;
   text-decoration: overline underline wavy;
   text-decoration-color: aqua;
-  text-underline-offset: 1vh;
+  text-underline-offset: 0.3em;
 }
 
 .Home__main {

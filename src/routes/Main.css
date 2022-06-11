@@ -6,12 +6,12 @@
 }
 
 .Main__greeting {
-  font-size: 4vh;
+  font-size: calc(2em + 1vh);
   font-weight: lighter;
 }
 
 .Main__link {
-  font-size: 3vh;
+  font-size: calc(1.5em + 1vh);
   align-self: center;
 }
 
