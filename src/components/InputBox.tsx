@@ -22,7 +22,7 @@ const InputBox = ({
     <fieldset className="InputBox">
       <legend className="InputBox__legend">
         {legend}
-        <span className="InputBox__star">{isRequired && `*`}</span>
+        {isRequired && <span className="InputBox__star">*</span>}
       </legend>
       <input
         className="InputBox__input"

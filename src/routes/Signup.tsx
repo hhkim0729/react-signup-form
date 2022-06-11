@@ -71,7 +71,7 @@ const Signup = ({ users, addUser, setLoginUser }: SignupProps) => {
   const checkDup = (id: string, value: string) => {
     setCheckDupList((prev) => ({
       ...prev,
-      [id]: isExist(id, value) ? false : true,
+      [id]: !isExist(id, value),
     }));
   };
 
@@ -93,7 +93,7 @@ const Signup = ({ users, addUser, setLoginUser }: SignupProps) => {
     const { id, value } = target;
     let newValue = value;
     if (id === 'phone') {
-      newValue = value.substring(0, 11);
+      newValue = value.slice(0, 11);
     }
     setInfos((prev) => ({
       ...prev,
