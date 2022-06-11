@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import './InputBox.css';
 
 interface InputBoxProps {
@@ -10,29 +10,31 @@ interface InputBoxProps {
   onChange: ({ target }: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const InputBox = ({
-  value,
-  type = 'text',
-  id,
-  legend,
-  isRequired = true,
-  onChange,
-}: InputBoxProps) => {
-  return (
-    <fieldset className="InputBox">
-      <legend className="InputBox__legend">
-        {legend}
-        {isRequired && <span className="InputBox__star">*</span>}
-      </legend>
-      <input
-        className="InputBox__input"
-        type={type}
-        id={id}
-        onChange={onChange}
-        value={value}
-      />
-    </fieldset>
-  );
-};
+const InputBox = memo(
+  ({
+    value,
+    type = 'text',
+    id,
+    legend,
+    isRequired = true,
+    onChange,
+  }: InputBoxProps) => {
+    return (
+      <fieldset className="InputBox">
+        <legend className="InputBox__legend">
+          {legend}
+          {isRequired && <span className="InputBox__star">*</span>}
+        </legend>
+        <input
+          className="InputBox__input"
+          type={type}
+          id={id}
+          onChange={onChange}
+          value={value}
+        />
+      </fieldset>
+    );
+  }
+);
 
 export default InputBox;

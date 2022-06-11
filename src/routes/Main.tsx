@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { UserProps } from '../interface';
 import './Main.css';
@@ -7,7 +7,7 @@ interface MainProps {
   user: UserProps;
 }
 
-function Main({ user }: MainProps) {
+const Main = memo(({ user }: MainProps) => {
   return (
     <section className="Main">
       <h1 className="Main__greeting">
@@ -20,6 +20,6 @@ function Main({ user }: MainProps) {
       )}
     </section>
   );
-}
+});
 
 export default Main;

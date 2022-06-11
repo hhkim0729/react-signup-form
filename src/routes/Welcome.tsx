@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Error from './Error';
 import { UserProps } from '../interface';
 import './Welcome.css';
@@ -7,7 +7,7 @@ interface WelcomeProps {
   user: UserProps;
 }
 
-const Welcome = ({ user }: WelcomeProps) => {
+const Welcome = memo(({ user }: WelcomeProps) => {
   return user.username ? (
     <section className="Welcome">
       <h1 className="Welcome__msg">
@@ -17,6 +17,6 @@ const Welcome = ({ user }: WelcomeProps) => {
   ) : (
     <Error />
   );
-};
+});
 
 export default Welcome;

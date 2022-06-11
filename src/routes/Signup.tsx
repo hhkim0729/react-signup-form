@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { debounce } from 'lodash';
 import InputBox from '../components/InputBox';
 import InputCheckBox from '../components/InputCheckBox';
 import ErrorMsg from '../components/ErrorMsg';
@@ -23,7 +24,7 @@ interface CheckListProps {
   [customKey: string]: boolean;
 }
 
-const Signup = ({ users, addUser, setLoginUser }: SignupProps) => {
+const Signup = memo(({ users, addUser, setLoginUser }: SignupProps) => {
   const [infos, setInfos] = useState({
     email: '',
     phone: '',
@@ -58,102 +59,120 @@ const Signup = ({ users, addUser, setLoginUser }: SignupProps) => {
     focusInput('email');
   }, []);
 
-  const isExist = (id: string, value: string) => {
-    let result = false;
-    users.forEach((user) => {
-      if (user[id] === value) {
-        result = true;
+  const isExist = useCallback(
+    (id: string, value: string) => {
+      return users.some((user) => user[id] === value);
+    },
+    [users]
+  );
+
+  const checkDup = useCallback(
+    (id: string, value: string) => {
+      setCheckDupList((prev) => ({
+        ...prev,
+        [id]: !isExist(id, value),
+      }));
+    },
+    [isExist]
+  );
+
+  const checkValue = useCallback(
+    (id: string, value: string) => {
+      const newCheckList: CheckListProps = { ...checkList };
+      if (['email', 'phone', 'password', 'username'].includes(id)) {
+        newCheckList[id] = testRegex(id, value);
+      } else if (id === 'referral') {
+        newCheckList.referral =
+          testRegex('username', value) && isExist('username', value);
       }
-    });
-    return result;
-  };
+      if (['email', 'phone', 'username'].includes(id)) {
+        newCheckList[id] && checkDup(id, value);
+      }
+      setCheckList(newCheckList);
+    },
+    [checkDup, checkList, isExist]
+  );
 
-  const checkDup = (id: string, value: string) => {
-    setCheckDupList((prev) => ({
-      ...prev,
-      [id]: !isExist(id, value),
-    }));
-  };
+  const debounceCheckValue = useMemo(
+    () =>
+      debounce((id, newValue) => {
+        checkValue(id, newValue);
+      }, 300),
+    [checkValue]
+  );
 
-  const checkValue = (id: string, value: string) => {
-    const newCheckList: CheckListProps = { ...checkList };
-    if (['email', 'phone', 'password', 'username'].includes(id)) {
-      newCheckList[id] = testRegex(id, value);
-    } else if (id === 'referral') {
-      newCheckList.referral =
-        testRegex('username', value) && isExist('username', value);
-    }
-    if (['email', 'phone', 'username'].includes(id)) {
-      newCheckList[id] && checkDup(id, value);
-    }
-    setCheckList(newCheckList);
-  };
+  const handleChange = useCallback(
+    ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+      const { id, value } = target;
+      let newValue = value;
+      if (id === 'phone') {
+        newValue = value.slice(0, 11);
+      }
+      setInfos((prev) => ({
+        ...prev,
+        [id]: newValue,
+      }));
+      debounceCheckValue(id, newValue);
+    },
+    [debounceCheckValue]
+  );
 
-  const handleChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = target;
-    let newValue = value;
-    if (id === 'phone') {
-      newValue = value.slice(0, 11);
-    }
-    setInfos((prev) => ({
-      ...prev,
-      [id]: newValue,
-    }));
-    checkValue(id, newValue);
-  };
+  const handleChangeCheckbox = useCallback(
+    ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+      const { id, checked } = target;
+      const newInfos: InfosProps = { ...infos };
+      if (id === 'all') {
+        newInfos.terms = checked;
+        newInfos.privacy = checked;
+        newInfos.marketing = checked;
+      } else {
+        newInfos[id] = checked;
+      }
+      if (newInfos.terms && newInfos.privacy && newInfos.marketing) {
+        newInfos.all = checked;
+      } else if (!checked) {
+        newInfos.all = checked;
+      }
+      setInfos(newInfos);
+    },
+    [infos]
+  );
 
-  const handleChangeCheckbox = ({
-    target,
-  }: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, checked } = target;
-    const newInfos: InfosProps = { ...infos };
-    if (id === 'all') {
-      newInfos.terms = checked;
-      newInfos.privacy = checked;
-      newInfos.marketing = checked;
-    } else {
-      newInfos[id] = checked;
-    }
-    if (newInfos.terms && newInfos.privacy && newInfos.marketing) {
-      newInfos.all = checked;
-    } else if (!checked) {
-      newInfos.all = checked;
-    }
-    setInfos(newInfos);
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!infos.email || !checkList.email || !checkDupList.email) {
-      setMsg('Please check email');
-      focusInput('email');
-    } else if (!infos.phone || !checkList.phone || !checkDupList.phone) {
-      setMsg('Please check phone number');
-      focusInput('phone');
-    } else if (!infos.password || !checkList.password) {
-      setMsg('Please check password');
-      focusInput('password');
-    } else if (!infos.confirm || infos.password !== infos.confirm) {
-      setMsg('Please check confirm password');
-      focusInput('confirm');
-    } else if (
-      !infos.username ||
-      !checkList.username ||
-      !checkDupList.username
-    ) {
-      setMsg('Please check username');
-      focusInput('username');
-    } else if (infos.referral && !checkList.referral) {
-      setMsg('Please check referral username');
-      focusInput('referral');
-    } else if (!infos.all && (!infos.terms || !infos.privacy)) {
-      setMsg('Please agree to the required terms');
-    } else {
-      addUser(infos);
-      setLoginUser(infos);
-      navigate('../welcome', { replace: true });
-    }
-  };
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (!infos.email || !checkList.email || !checkDupList.email) {
+        setMsg('Please check email');
+        focusInput('email');
+      } else if (!infos.phone || !checkList.phone || !checkDupList.phone) {
+        setMsg('Please check phone number');
+        focusInput('phone');
+      } else if (!infos.password || !checkList.password) {
+        setMsg('Please check password');
+        focusInput('password');
+      } else if (!infos.confirm || infos.password !== infos.confirm) {
+        setMsg('Please check confirm password');
+        focusInput('confirm');
+      } else if (
+        !infos.username ||
+        !checkList.username ||
+        !checkDupList.username
+      ) {
+        setMsg('Please check username');
+        focusInput('username');
+      } else if (infos.referral && !checkList.referral) {
+        setMsg('Please check referral username');
+        focusInput('referral');
+      } else if (!infos.all && (!infos.terms || !infos.privacy)) {
+        setMsg('Please agree to the required terms');
+      } else {
+        addUser(infos);
+        setLoginUser(infos);
+        navigate('../welcome', { replace: true });
+      }
+    },
+    [addUser, checkDupList, checkList, infos, navigate, setLoginUser]
+  );
 
   return (
     <section className="Signup">
@@ -283,6 +302,6 @@ const Signup = ({ users, addUser, setLoginUser }: SignupProps) => {
       </form>
     </section>
   );
-};
+});
 
 export default Signup;

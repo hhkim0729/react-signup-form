@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import Main from './routes/Main';
 import Signup from './routes/Signup';
@@ -23,7 +23,7 @@ const Home = () => {
     username: '',
   });
 
-  const addUser = ({ email, phone, username }: InfosProps) => {
+  const addUser = useCallback(({ email, phone, username }: InfosProps) => {
     setUsers((prev) =>
       prev.concat({
         email: email,
@@ -31,16 +31,16 @@ const Home = () => {
         username: username,
       })
     );
-  };
+  }, []);
 
-  const setLoginUser = ({ email, phone, username }: InfosProps) => {
+  const setLoginUser = useCallback(({ email, phone, username }: InfosProps) => {
     const newUser: UserProps = {
       email: email,
       phone: phone,
       username: username,
     };
     setUser(newUser);
-  };
+  }, []);
 
   return (
     <div className="Home">
