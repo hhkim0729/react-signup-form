@@ -1,0 +1,22 @@
+.InputBox {
+  border: 1px solid #ccc;
+}
+
+.InputBox__legend {
+  color: blue;
+  font-size: 1em;
+}
+
+.InputBox__star {
+  color: coral;
+}
+
+.InputBox__input {
+  border: none;
+  font-size: 1.2em;
+  width: 98%;
+  font-family: 'Courier New', Courier, monospace;
+}
+.InputBox__input:focus {
+  outline: none;
+}

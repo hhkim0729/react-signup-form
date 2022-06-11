@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputBox from '../components/InputBox';
+import InputCheckBox from '../components/InputCheckBox';
 import ErrorMsg from '../components/ErrorMsg';
 import Button from '../components/Button';
-import { testRegex } from '../utils';
+import { testRegex, focusInput } from '../utils';
+import { UserProps, InfosProps } from '../interface';
+import './Signup.css';
 
-const Signup = ({ users, addUser, setLoginUser }) => {
+interface SignupProps {
+  users: UserProps[];
+  addUser: ({ email, phone, username }: InfosProps) => void;
+  setLoginUser: ({ email, phone, username }: InfosProps) => void;
+}
+
+interface CheckListProps {
+  email: boolean;
+  phone: boolean;
+  password: boolean;
+  username: boolean;
+  referral: boolean;
+  [customKey: string]: boolean;
+}
+
+const Signup = ({ users, addUser, setLoginUser }: SignupProps) => {
   const [infos, setInfos] = useState({
     email: '',
     phone: '',
@@ -36,7 +54,11 @@ const Signup = ({ users, addUser, setLoginUser }) => {
   const [msg, setMsg] = useState('');
   const navigate = useNavigate();
 
-  const isExist = (id, value) => {
+  useEffect(() => {
+    focusInput('email');
+  }, []);
+
+  const isExist = (id: string, value: string) => {
     let result = false;
     users.forEach((user) => {
       if (user[id] === value) {
@@ -46,15 +68,15 @@ const Signup = ({ users, addUser, setLoginUser }) => {
     return result;
   };
 
-  const checkDup = (id, value) => {
+  const checkDup = (id: string, value: string) => {
     setCheckDupList((prev) => ({
       ...prev,
-      [id]: isExist(id, value) ? false : true,
+      [id]: !isExist(id, value),
     }));
   };
 
-  const checkValue = (id, value) => {
-    const newCheckList = { ...checkList };
+  const checkValue = (id: string, value: string) => {
+    const newCheckList: CheckListProps = { ...checkList };
     if (['email', 'phone', 'password', 'username'].includes(id)) {
       newCheckList[id] = testRegex(id, value);
     } else if (id === 'referral') {
@@ -67,11 +89,11 @@ const Signup = ({ users, addUser, setLoginUser }) => {
     setCheckList(newCheckList);
   };
 
-  const handleChange = ({ target }) => {
+  const handleChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = target;
     let newValue = value;
     if (id === 'phone') {
-      newValue = value.substr(0, 11);
+      newValue = value.slice(0, 11);
     }
     setInfos((prev) => ({
       ...prev,
@@ -80,9 +102,11 @@ const Signup = ({ users, addUser, setLoginUser }) => {
     checkValue(id, newValue);
   };
 
-  const handleChangeCheckbox = ({ target }) => {
+  const handleChangeCheckbox = ({
+    target,
+  }: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = target;
-    const newInfos = { ...infos };
+    const newInfos: InfosProps = { ...infos };
     if (id === 'all') {
       newInfos.terms = checked;
       newInfos.privacy = checked;
@@ -98,30 +122,30 @@ const Signup = ({ users, addUser, setLoginUser }) => {
     setInfos(newInfos);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!infos.email || !checkList.email || !checkDupList.email) {
       setMsg('Please check email');
-      document.getElementById('email').focus();
+      focusInput('email');
     } else if (!infos.phone || !checkList.phone || !checkDupList.phone) {
       setMsg('Please check phone number');
-      document.getElementById('phone').focus();
+      focusInput('phone');
     } else if (!infos.password || !checkList.password) {
       setMsg('Please check password');
-      document.getElementById('password').focus();
+      focusInput('password');
     } else if (!infos.confirm || infos.password !== infos.confirm) {
       setMsg('Please check confirm password');
-      document.getElementById('confirm').focus();
+      focusInput('confirm');
     } else if (
       !infos.username ||
       !checkList.username ||
       !checkDupList.username
     ) {
       setMsg('Please check username');
-      document.getElementById('username').focus();
+      focusInput('username');
     } else if (infos.referral && !checkList.referral) {
       setMsg('Please check referral username');
-      document.getElementById('referral').focus();
+      focusInput('referral');
     } else if (!infos.all && (!infos.terms || !infos.privacy)) {
       setMsg('Please agree to the required terms');
     } else {
@@ -132,112 +156,130 @@ const Signup = ({ users, addUser, setLoginUser }) => {
   };
 
   return (
-    <section>
-      <h1>Be my guest!</h1>
-      <form onSubmit={handleSubmit}>
+    <section className="Signup">
+      <p className="Signup__msg">
+        <span className="Signup__star">*</span> means required field
+      </p>
+      <form className="Signup__form" onSubmit={handleSubmit}>
         <InputBox
           value={infos.email}
           type="email"
           id="email"
-          label="Email"
+          legend="Email"
           onChange={handleChange}
         />
-        {infos.email.length > 0 && !checkList.email && (
-          <ErrorMsg msg="Invalid email" />
-        )}
-        {checkList.email && !checkDupList.email && (
-          <ErrorMsg msg="Duplicated email" />
-        )}
+        <ErrorMsg
+          msg={
+            infos.email.length > 0 && !checkList.email
+              ? 'Invalid email'
+              : checkList.email && !checkDupList.email
+              ? 'Duplicated email'
+              : ''
+          }
+        />
         <InputBox
           value={infos.phone}
           type="tel"
           id="phone"
-          label="Phone"
+          legend="Phone"
           onChange={handleChange}
         />
-        {infos.phone.length > 0 && !checkList.phone && (
-          <ErrorMsg msg="Invalid phone number" />
-        )}
-        {checkList.phone && !checkDupList.phone && (
-          <ErrorMsg msg="Duplicated phone number" />
-        )}
+        <ErrorMsg
+          msg={
+            infos.phone.length > 0 && !checkList.phone
+              ? 'Invalid phone number (only numbers)'
+              : checkList.phone && !checkDupList.phone
+              ? 'Duplicated phone number'
+              : ''
+          }
+        />
         <InputBox
           value={infos.password}
           type="password"
           id="password"
-          label="Password"
+          legend="Password"
           onChange={handleChange}
         />
-        {infos.password.length > 0 && !checkList.password && (
-          <ErrorMsg msg="Invalid password (at least 1 lower case, 1 upper case, 1 number)" />
-        )}
+        <ErrorMsg
+          msg={
+            infos.password.length > 0 && !checkList.password
+              ? 'at least 1 lower case, 1 upper case, 1 number'
+              : ''
+          }
+        />
         <InputBox
           value={infos.confirm}
           type="password"
           id="confirm"
-          label="Confirm Password"
+          legend="Confirm Password"
           onChange={handleChange}
         />
-        {infos.confirm.length > 0 && infos.password !== infos.confirm && (
-          <ErrorMsg msg="Password doesn't match" />
-        )}
+        <ErrorMsg
+          msg={
+            infos.confirm.length > 0 && infos.password !== infos.confirm
+              ? `Password doesn't match`
+              : ''
+          }
+        />
         <InputBox
           value={infos.username}
           type="text"
           id="username"
-          label="Username"
+          legend="Username"
           onChange={handleChange}
         />
-        {infos.username.length > 0 && !checkList.username && (
-          <ErrorMsg msg="Invalid username" />
-        )}
-        {checkList.username && !checkDupList.username && (
-          <ErrorMsg msg="Duplicated username" />
-        )}
+        <ErrorMsg
+          msg={
+            infos.username.length > 0 && !checkList.username
+              ? 'Invalid username'
+              : checkList.username && !checkDupList.username
+              ? 'Duplicated username'
+              : ''
+          }
+        />
         <InputBox
           value={infos.referral}
           type="text"
           id="referral"
-          label="Referral Username"
+          legend="Referral Username"
+          isRequired={false}
           onChange={handleChange}
         />
-        {infos.referral.length > 0 && !checkList.referral && (
-          <ErrorMsg msg="Invalid username" />
-        )}
-        <InputBox
+        <ErrorMsg
+          msg={
+            infos.referral.length > 0 && !checkList.referral
+              ? 'Invalid username'
+              : ''
+          }
+        />
+        <InputCheckBox
           value={infos.all}
-          type="checkbox"
           id="all"
           label="I agree to all"
-          isLabelFirst={false}
+          isRequired={false}
           onChange={handleChangeCheckbox}
         />
-        <InputBox
+        <InputCheckBox
           value={infos.terms}
-          type="checkbox"
           id="terms"
-          label="I agree to the Terms and Conditions (required)"
-          isLabelFirst={false}
+          label="I agree to the Terms and Conditions"
           onChange={handleChangeCheckbox}
         />
-        <InputBox
+        <InputCheckBox
           value={infos.privacy}
-          type="checkbox"
           id="privacy"
-          label="I agree to the Privacy Policy (required)"
-          isLabelFirst={false}
+          label="I agree to the Privacy Policy"
           onChange={handleChangeCheckbox}
         />
-        <InputBox
+        <InputCheckBox
           value={infos.marketing}
-          type="checkbox"
           id="marketing"
-          label="I agree to receive marketing emails (optional)"
-          isLabelFirst={false}
+          label="I agree to receive marketing emails"
+          isRequired={false}
           onChange={handleChangeCheckbox}
         />
+        <Button type="submit" text="Sign up" />
         <ErrorMsg msg={msg} />
-        <Button type="submit" text="Submit" />
       </form>
     </section>
   );

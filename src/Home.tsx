@@ -4,8 +4,10 @@ import Main from './routes/Main';
 import Signup from './routes/Signup';
 import Welcome from './routes/Welcome';
 import Error from './routes/Error';
+import { UserProps, InfosProps } from './interface';
+import './Home.css';
 
-function Home() {
+const Home = () => {
   const [users, setUsers] = useState([
     { email: 'hello@gmail.com', phone: '01012345678', username: 'hello' },
     { email: 'world@naver.com', phone: '020001111', username: 'world' },
@@ -15,9 +17,13 @@ function Home() {
       username: 'heehkim',
     },
   ]);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState({
+    email: '',
+    phone: '',
+    username: '',
+  });
 
-  const addUser = ({ email, phone, username }) => {
+  const addUser = ({ email, phone, username }: InfosProps) => {
     setUsers((prev) =>
       prev.concat({
         email: email,
@@ -27,22 +33,23 @@ function Home() {
     );
   };
 
-  const setLoginUser = ({ email, phone, username }) => {
-    setUser({
+  const setLoginUser = ({ email, phone, username }: InfosProps) => {
+    const newUser: UserProps = {
       email: email,
       phone: phone,
       username: username,
-    });
+    };
+    setUser(newUser);
   };
 
   return (
-    <div>
-      <header>
-        <div>
+    <div className="Home">
+      <header className="Home__header">
+        <div className="Home__title">
           <Link to="/">The Coolest Website</Link>
         </div>
       </header>
-      <main>
+      <main className="Home__main">
         <Routes>
           <Route path="/" element={<Main user={user} />} />
           <Route
@@ -61,6 +68,6 @@ function Home() {
       </main>
     </div>
   );
-}
+};
 
 export default Home;
