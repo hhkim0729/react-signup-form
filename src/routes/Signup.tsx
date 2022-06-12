@@ -1,56 +1,42 @@
-import React, { useState, useEffect, memo, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, memo, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { debounce } from 'lodash';
 import InputBox from '../components/InputBox';
 import InputCheckBox from '../components/InputCheckBox';
 import ErrorMsg from '../components/ErrorMsg';
 import Button from '../components/Button';
-import { testRegex, focusInput } from '../utils';
-import { UserProps, InfosProps } from '../interface';
+import { focusInput } from '../utils';
+import { User, TextInfos, CheckInfos } from '../interface';
+import useTextInputs from '../hooks/useTextInputs';
+import useCheckInputs from '../hooks/useCheckInputs';
+import { debounce } from 'lodash';
+import { addUser } from '../api/users';
 import './Signup.css';
 
 interface SignupProps {
-  users: UserProps[];
-  addUser: ({ email, phone, username }: InfosProps) => void;
-  setLoginUser: ({ email, phone, username }: InfosProps) => void;
+  setLoginUser: ({ email, phone, username }: User) => void;
 }
 
-interface CheckListProps {
-  email: boolean;
-  phone: boolean;
-  password: boolean;
-  username: boolean;
-  referral: boolean;
-  [customKey: string]: boolean;
-}
+const initialTextInfos: TextInfos = {
+  email: { value: '', isValidated: false, isNotDuplicated: false },
+  phone: { value: '', isValidated: false, isNotDuplicated: false },
+  password: { value: '', isValidated: false },
+  confirm: { value: '' },
+  username: { value: '', isValidated: false, isNotDuplicated: false },
+  referral: { value: '', isValidated: false },
+};
 
-const Signup = memo(({ users, addUser, setLoginUser }: SignupProps) => {
-  const [infos, setInfos] = useState({
-    email: '',
-    phone: '',
-    password: '',
-    confirm: '',
-    username: '',
-    referral: '',
-    all: false,
-    terms: false,
-    privacy: false,
-    marketing: false,
-  });
+const initialCheckInfos: CheckInfos = {
+  all: false,
+  terms: false,
+  privacy: false,
+  marketing: false,
+};
 
-  const [checkList, setCheckList] = useState({
-    email: false,
-    phone: false,
-    password: false,
-    username: false,
-    referral: true,
-  });
-
-  const [checkDupList, setCheckDupList] = useState({
-    email: false,
-    phone: false,
-    username: false,
-  });
+const Signup = memo(({ setLoginUser }: SignupProps) => {
+  const [textInfos, onChangeTextInfos, checkExist] =
+    useTextInputs(initialTextInfos);
+  const [checkInfos, onChangeCheckInfos] = useCheckInputs(initialCheckInfos);
+  const { email, phone, password, confirm, username, referral } = textInfos;
 
   const [msg, setMsg] = useState('');
   const navigate = useNavigate();
@@ -59,119 +45,54 @@ const Signup = memo(({ users, addUser, setLoginUser }: SignupProps) => {
     focusInput('email');
   }, []);
 
-  const isExist = useCallback(
-    (id: string, value: string) => {
-      return users.some((user) => user[id] === value);
-    },
-    [users]
-  );
-
-  const checkDup = useCallback(
-    (id: string, value: string) => {
-      setCheckDupList((prev) => ({
-        ...prev,
-        [id]: !isExist(id, value),
-      }));
-    },
-    [isExist]
-  );
-
-  const checkValue = useCallback(
-    (id: string, value: string) => {
-      const newCheckList: CheckListProps = { ...checkList };
-      if (['email', 'phone', 'password', 'username'].includes(id)) {
-        newCheckList[id] = testRegex(id, value);
-      } else if (id === 'referral') {
-        newCheckList.referral =
-          testRegex('username', value) && isExist('username', value);
-      }
-      if (['email', 'phone', 'username'].includes(id)) {
-        newCheckList[id] && checkDup(id, value);
-      }
-      setCheckList(newCheckList);
-    },
-    [checkDup, checkList, isExist]
-  );
-
-  const debounceCheckValue = useMemo(
+  const debounceCheckExist = useMemo(
     () =>
-      debounce((id, newValue) => {
-        checkValue(id, newValue);
-      }, 300),
-    [checkValue]
+      debounce((e) => {
+        checkExist(e);
+      }, 400),
+    [checkExist]
   );
 
-  const handleChange = useCallback(
-    ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-      const { id, value } = target;
-      let newValue = value;
-      if (id === 'phone') {
-        newValue = value.slice(0, 11);
-      }
-      setInfos((prev) => ({
-        ...prev,
-        [id]: newValue,
-      }));
-      debounceCheckValue(id, newValue);
+  const handleChangeInfos = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChangeTextInfos(e);
+      debounceCheckExist(e);
     },
-    [debounceCheckValue]
-  );
-
-  const handleChangeCheckbox = useCallback(
-    ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-      const { id, checked } = target;
-      const newInfos: InfosProps = { ...infos };
-      if (id === 'all') {
-        newInfos.terms = checked;
-        newInfos.privacy = checked;
-        newInfos.marketing = checked;
-      } else {
-        newInfos[id] = checked;
-      }
-      if (newInfos.terms && newInfos.privacy && newInfos.marketing) {
-        newInfos.all = checked;
-      } else if (!checked) {
-        newInfos.all = checked;
-      }
-      setInfos(newInfos);
-    },
-    [infos]
+    [onChangeTextInfos, debounceCheckExist]
   );
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (!infos.email || !checkList.email || !checkDupList.email) {
-        setMsg('Please check email');
-        focusInput('email');
-      } else if (!infos.phone || !checkList.phone || !checkDupList.phone) {
-        setMsg('Please check phone number');
-        focusInput('phone');
-      } else if (!infos.password || !checkList.password) {
-        setMsg('Please check password');
-        focusInput('password');
-      } else if (!infos.confirm || infos.password !== infos.confirm) {
-        setMsg('Please check confirm password');
-        focusInput('confirm');
+      const arr = Object.entries(textInfos);
+      const check = arr.find(([key, input]) => {
+        return (
+          !input.value ||
+          ('isValidated' in input && !input.isValidated) ||
+          ('isNotDuplicated' in input && !input.isNotDuplicated)
+        );
+      });
+      if (check) {
+        const [key] = check;
+        setMsg(`Please check ${key}`);
+        focusInput(key);
       } else if (
-        !infos.username ||
-        !checkList.username ||
-        !checkDupList.username
+        !checkInfos.all &&
+        (!checkInfos.terms || !checkInfos.privacy)
       ) {
-        setMsg('Please check username');
-        focusInput('username');
-      } else if (infos.referral && !checkList.referral) {
-        setMsg('Please check referral username');
-        focusInput('referral');
-      } else if (!infos.all && (!infos.terms || !infos.privacy)) {
         setMsg('Please agree to the required terms');
       } else {
-        addUser(infos);
-        setLoginUser(infos);
+        const newUser = {
+          email: email.value,
+          phone: phone.value,
+          username: username.value,
+        };
+        addUser(newUser);
+        setLoginUser(newUser);
         navigate('../welcome', { replace: true });
       }
     },
-    [addUser, checkDupList, checkList, infos, navigate, setLoginUser]
+    [textInfos, checkInfos, email, phone, username, setLoginUser, navigate]
   );
 
   return (
@@ -181,121 +102,121 @@ const Signup = memo(({ users, addUser, setLoginUser }: SignupProps) => {
       </p>
       <form className="Signup__form" onSubmit={handleSubmit}>
         <InputBox
-          value={infos.email}
+          value={email.value}
           type="email"
           id="email"
           legend="Email"
-          onChange={handleChange}
+          onChange={handleChangeInfos}
         />
         <ErrorMsg
           msg={
-            infos.email.length > 0 && !checkList.email
+            email.value.length > 0 && !email.isValidated
               ? 'Invalid email'
-              : checkList.email && !checkDupList.email
+              : email.isValidated && !email.isNotDuplicated
               ? 'Duplicated email'
               : ''
           }
         />
         <InputBox
-          value={infos.phone}
+          value={phone.value}
           type="tel"
           id="phone"
           legend="Phone"
-          onChange={handleChange}
+          onChange={handleChangeInfos}
         />
         <ErrorMsg
           msg={
-            infos.phone.length > 0 && !checkList.phone
+            phone.value.length > 0 && !phone.isValidated
               ? 'Invalid phone number (only numbers)'
-              : checkList.phone && !checkDupList.phone
+              : phone.isValidated && !phone.isNotDuplicated
               ? 'Duplicated phone number'
               : ''
           }
         />
         <InputBox
-          value={infos.password}
+          value={password.value}
           type="password"
           id="password"
           legend="Password"
-          onChange={handleChange}
+          onChange={onChangeTextInfos}
         />
         <ErrorMsg
           msg={
-            infos.password.length > 0 && !checkList.password
-              ? 'at least 1 lower case, 1 upper case, 1 number'
+            password.value.length > 0 && !password.isValidated
+              ? 'at least 1 lower case, 1 upper case, 1 number (8 ~ 20 char)'
               : ''
           }
         />
         <InputBox
-          value={infos.confirm}
+          value={confirm.value}
           type="password"
           id="confirm"
           legend="Confirm Password"
-          onChange={handleChange}
+          onChange={onChangeTextInfos}
         />
         <ErrorMsg
           msg={
-            infos.confirm.length > 0 && infos.password !== infos.confirm
+            confirm.value.length > 0 && password.value !== confirm.value
               ? `Password doesn't match`
               : ''
           }
         />
         <InputBox
-          value={infos.username}
+          value={username.value}
           type="text"
           id="username"
           legend="Username"
-          onChange={handleChange}
+          onChange={handleChangeInfos}
         />
         <ErrorMsg
           msg={
-            infos.username.length > 0 && !checkList.username
+            username.value.length > 0 && !username.isValidated
               ? 'Invalid username'
-              : checkList.username && !checkDupList.username
+              : username.isValidated && !username.isNotDuplicated
               ? 'Duplicated username'
               : ''
           }
         />
         <InputBox
-          value={infos.referral}
+          value={referral.value}
           type="text"
           id="referral"
           legend="Referral Username"
           isRequired={false}
-          onChange={handleChange}
+          onChange={handleChangeInfos}
         />
         <ErrorMsg
           msg={
-            infos.referral.length > 0 && !checkList.referral
+            referral.value.length > 0 && !referral.isValidated
               ? 'Invalid username'
               : ''
           }
         />
         <InputCheckBox
-          value={infos.all}
+          value={checkInfos.all}
           id="all"
           label="I agree to all"
           isRequired={false}
-          onChange={handleChangeCheckbox}
+          onChange={onChangeCheckInfos}
         />
         <InputCheckBox
-          value={infos.terms}
+          value={checkInfos.terms}
           id="terms"
           label="I agree to the Terms and Conditions"
-          onChange={handleChangeCheckbox}
+          onChange={onChangeCheckInfos}
         />
         <InputCheckBox
-          value={infos.privacy}
+          value={checkInfos.privacy}
           id="privacy"
           label="I agree to the Privacy Policy"
-          onChange={handleChangeCheckbox}
+          onChange={onChangeCheckInfos}
         />
         <InputCheckBox
-          value={infos.marketing}
+          value={checkInfos.marketing}
           id="marketing"
           label="I agree to receive marketing emails"
           isRequired={false}
-          onChange={handleChangeCheckbox}
+          onChange={onChangeCheckInfos}
         />
         <Button type="submit" text="Sign up" />
         <ErrorMsg msg={msg} />

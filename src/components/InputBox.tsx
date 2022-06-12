@@ -8,6 +8,7 @@ interface InputBoxProps {
   legend: string;
   isRequired?: boolean;
   onChange: ({ target }: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: ({ target }: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const InputBox = memo(
@@ -18,23 +19,23 @@ const InputBox = memo(
     legend,
     isRequired = true,
     onChange,
-  }: InputBoxProps) => {
-    return (
-      <fieldset className="InputBox">
-        <legend className="InputBox__legend">
-          {legend}
-          {isRequired && <span className="InputBox__star">*</span>}
-        </legend>
-        <input
-          className="InputBox__input"
-          type={type}
-          id={id}
-          onChange={onChange}
-          value={value}
-        />
-      </fieldset>
-    );
-  }
+    onBlur,
+  }: InputBoxProps) => (
+    <fieldset className="InputBox">
+      <legend className="InputBox__legend">
+        {legend}
+        {isRequired && <span className="InputBox__star">*</span>}
+      </legend>
+      <input
+        className="InputBox__input"
+        type={type}
+        id={id}
+        onChange={onChange}
+        onBlur={onBlur}
+        value={value}
+      />
+    </fieldset>
+  )
 );
 
 export default InputBox;

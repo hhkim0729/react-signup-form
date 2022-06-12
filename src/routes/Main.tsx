@@ -1,10 +1,10 @@
 import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
-import { UserProps } from '../interface';
+import { User } from '../interface';
 import './Main.css';
 
 interface MainProps {
-  user: UserProps;
+  user: User;
 }
 
 const Main = memo(({ user }: MainProps) => {
