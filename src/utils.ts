@@ -16,6 +16,13 @@ export const testRegex = (type: string, value: string) => {
   return false;
 };
 
+export function checkRegex(key: string, value: string) {
+  if (key === 'referral') {
+    return testRegex('username', value);
+  }
+  return testRegex(key, value);
+}
+
 export const focusInput = (id: string) => {
   (document.getElementById(id) as HTMLElement).focus();
 };
