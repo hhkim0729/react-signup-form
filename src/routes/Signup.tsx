@@ -64,8 +64,7 @@ const Signup = memo(({ setLoginUser }: SignupProps) => {
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const arr = Object.entries(textInfos);
-      const check = arr.find(([key, input]) => {
+      const check = Object.entries(textInfos).find(([key, input]) => {
         return (
           !input.value ||
           ('isValidated' in input && !input.isValidated) ||
