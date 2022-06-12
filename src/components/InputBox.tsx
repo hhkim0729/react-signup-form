@@ -22,7 +22,7 @@ const InputBox = memo(
     <fieldset className="InputBox">
       <legend className="InputBox__legend">
         {legend}
-        {isRequired && <span className="InputBox__star">*</span>}
+        {isRequired && <span className="accent-color">*</span>}
       </legend>
       <input
         className="InputBox__input"

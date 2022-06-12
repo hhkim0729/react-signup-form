@@ -10,9 +10,7 @@ interface WelcomeProps {
 const Welcome = memo(({ user }: WelcomeProps) => {
   return user.username ? (
     <section className="Welcome">
-      <h1 className="Welcome__msg">
-        We're happy you're here, {user.username}!
-      </h1>
+      <h1 className="message">We're happy you're here, {user.username}!</h1>
     </section>
   ) : (
     <Error />

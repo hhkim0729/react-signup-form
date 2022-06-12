@@ -97,7 +97,7 @@ const Signup = memo(({ setLoginUser }: SignupProps) => {
   return (
     <section className="Signup">
       <p className="Signup__msg">
-        <span className="Signup__star">*</span> means required field
+        <span className="accent-color">*</span> means required field
       </p>
       <form className="Signup__form" onSubmit={handleSubmit}>
         <InputBox
@@ -217,8 +217,12 @@ const Signup = memo(({ setLoginUser }: SignupProps) => {
           isRequired={false}
           onChange={onChangeCheckInfos}
         />
-        <Button type="submit" text="Sign up" />
-        <ErrorMsg msg={msg} />
+        <div className="Signup__button-wrapper">
+          <Button type="submit" text="Sign up" />
+        </div>
+        <div className="accent-color">
+          <ErrorMsg msg={msg} />
+        </div>
       </form>
     </section>
   );

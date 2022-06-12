@@ -1,5 +1,4 @@
 import React, { memo } from 'react';
-import './Button.css';
 
 interface ButtonProps {
   type: 'submit' | 'button' | 'reset' | undefined;
@@ -8,7 +7,7 @@ interface ButtonProps {
 
 const Button = memo(({ type, text }: ButtonProps) => {
   return (
-    <button className="Button" type={type}>
+    <button className="button" type={type}>
       {text}
     </button>
   );
