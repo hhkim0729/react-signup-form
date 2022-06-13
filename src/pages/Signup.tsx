@@ -8,7 +8,7 @@ import { focusInput } from '../utils';
 import { User, TextInfos, CheckInfos } from '../interface';
 import useTextInputs from '../hooks/useTextInputs';
 import useCheckInputs from '../hooks/useCheckInputs';
-import { debounce } from 'lodash';
+import { throttle } from 'lodash';
 import { addUser } from '../api/users';
 import './Signup.css';
 
@@ -45,20 +45,20 @@ const Signup = memo(({ setLoginUser }: SignupProps) => {
     focusInput('email');
   }, []);
 
-  const debounceCheckExist = useMemo(
+  const throttleCheckExist = useMemo(
     () =>
-      debounce((e) => {
+      throttle((e) => {
         checkExist(e);
-      }, 400),
+      }, 500),
     [checkExist]
   );
 
   const handleChangeInfos = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChangeTextInfos(e);
-      debounceCheckExist(e);
+      throttleCheckExist(e);
     },
-    [onChangeTextInfos, debounceCheckExist]
+    [onChangeTextInfos, throttleCheckExist]
   );
 
   const handleSubmit = useCallback(
