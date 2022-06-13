@@ -61,26 +61,34 @@ const Signup = memo(({ setLoginUser }: SignupProps) => {
     [onChangeTextInfos, throttleCheckExist]
   );
 
+  const isAllValid = useCallback(() => {
+    let check = Object.entries(textInfos).find(([key, input]) => {
+      return (
+        key !== 'referral' &&
+        (!input.value ||
+          ('isValidated' in input && !input.isValidated) ||
+          ('isNotDuplicated' in input && !input.isNotDuplicated))
+      );
+    });
+    if (!check && referral.value.length > 0 && !referral.isValidated) {
+      check = ['referral', referral];
+    }
+    if (check) {
+      const [key] = check;
+      setMsg(`Please check ${key}`);
+      focusInput(key);
+      return false;
+    } else if (!checkInfos.all && (!checkInfos.terms || !checkInfos.privacy)) {
+      setMsg('Please agree to the required terms');
+      return false;
+    }
+    return true;
+  }, [checkInfos, referral, textInfos]);
+
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const check = Object.entries(textInfos).find(([key, input]) => {
-        return (
-          !input.value ||
-          ('isValidated' in input && !input.isValidated) ||
-          ('isNotDuplicated' in input && !input.isNotDuplicated)
-        );
-      });
-      if (check) {
-        const [key] = check;
-        setMsg(`Please check ${key}`);
-        focusInput(key);
-      } else if (
-        !checkInfos.all &&
-        (!checkInfos.terms || !checkInfos.privacy)
-      ) {
-        setMsg('Please agree to the required terms');
-      } else {
+      if (isAllValid()) {
         const newUser = {
           email: email.value,
           phone: phone.value,
@@ -91,7 +99,7 @@ const Signup = memo(({ setLoginUser }: SignupProps) => {
         navigate('../welcome', { replace: true });
       }
     },
-    [textInfos, checkInfos, email, phone, username, setLoginUser, navigate]
+    [email, phone, username, isAllValid, setLoginUser, navigate]
   );
 
   return (
