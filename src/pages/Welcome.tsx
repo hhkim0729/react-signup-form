@@ -1,18 +1,16 @@
 import React, { memo } from 'react';
 import Error from './Error';
-import { UserProps } from '../interface';
+import { User } from '../interface';
 import './Welcome.css';
 
 interface WelcomeProps {
-  user: UserProps;
+  user: User;
 }
 
 const Welcome = memo(({ user }: WelcomeProps) => {
   return user.username ? (
     <section className="Welcome">
-      <h1 className="Welcome__msg">
-        We're happy you're here, {user.username}!
-      </h1>
+      <h1 className="message">We're happy you're here, {user.username}!</h1>
     </section>
   ) : (
     <Error />

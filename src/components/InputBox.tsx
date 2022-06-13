@@ -18,23 +18,21 @@ const InputBox = memo(
     legend,
     isRequired = true,
     onChange,
-  }: InputBoxProps) => {
-    return (
-      <fieldset className="InputBox">
-        <legend className="InputBox__legend">
-          {legend}
-          {isRequired && <span className="InputBox__star">*</span>}
-        </legend>
-        <input
-          className="InputBox__input"
-          type={type}
-          id={id}
-          onChange={onChange}
-          value={value}
-        />
-      </fieldset>
-    );
-  }
+  }: InputBoxProps) => (
+    <fieldset className="InputBox">
+      <legend className="InputBox__legend">
+        {legend}
+        {isRequired && <span className="accent-color">*</span>}
+      </legend>
+      <input
+        className="InputBox__input"
+        type={type}
+        id={id}
+        onChange={onChange}
+        value={value}
+      />
+    </fieldset>
+  )
 );
 
 export default InputBox;

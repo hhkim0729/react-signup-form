@@ -15,9 +15,9 @@
 }
 
 .Home__title a {
-  color: blue;
+  color: var(--primary-color);
   text-decoration: overline underline wavy;
-  text-decoration-color: aqua;
+  text-decoration-color: var(--secondary-color);
   text-underline-offset: 0.3em;
 }
 

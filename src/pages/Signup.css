@@ -6,13 +6,15 @@
 .Signup__msg {
   justify-self: right;
   align-self: center;
-  font-size: 1em;
-}
-
-.Signup__star {
-  color: coral;
+  font-size: var(--content-font-size);
 }
 
 .Signup__form {
   display: grid;
+}
+
+.Signup__button-wrapper > button {
+  width: 100%;
+  margin: 1em 0 0.5em 0;
+  justify-self: center;
 }

@@ -22,7 +22,7 @@ const InputBox = memo(
         />
         <label htmlFor={id} className="InputCheckBox__label">
           {label}
-          <span className="InputCheckBox__star">{isRequired && `*`}</span>
+          <span className="accent-color">{isRequired && `*`}</span>
         </label>
       </div>
     );
