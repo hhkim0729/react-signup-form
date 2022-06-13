@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
-import Main from './routes/Main';
-import Signup from './routes/Signup';
-import Welcome from './routes/Welcome';
-import Error from './routes/Error';
+import Main from './pages/Main';
+import Signup from './pages/Signup';
+import Welcome from './pages/Welcome';
+import Error from './pages/Error';
 import { User } from './interface';
 import './Home.css';
 
