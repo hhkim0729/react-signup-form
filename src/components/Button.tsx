@@ -1,17 +1,16 @@
-import React from 'react';
-import './Button.css';
+import React, { memo } from 'react';
 
 interface ButtonProps {
   type: 'submit' | 'button' | 'reset' | undefined;
   text: string;
 }
 
-const Button = ({ type, text }: ButtonProps) => {
+const Button = memo(({ type, text }: ButtonProps) => {
   return (
-    <button className="Button" type={type}>
+    <button className="button" type={type}>
       {text}
     </button>
   );
-};
+});
 
 export default Button;
